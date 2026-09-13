@@ -1,9 +1,12 @@
-name: Build Windows App
+name: Build & Release Windows App
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -29,8 +32,27 @@ jobs:
         run: |
           pyinstaller --noconsole --onefile --distpath "release" --name "PixelCraft" --add-data "dist;dist" app.py
 
-      - name: Upload PixelCraft.exe
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: PixelCraft-Windows-App
           path: release/PixelCraft.exe
+
+      - name: Publish to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v1.0.0"
+          name: "PixelCraft Wallpaper Studio v1.0.0"
+          body: |
+            ### PixelCraft Wallpaper Studio
+            Free, unlimited procedural 4K wallpapers & online 4K library in a native desktop app.
+
+            **Built for better backgrounds. Powered by PixelCraft.**
+
+            ---
+            ### 📥 How to Run:
+            1. Download **`PixelCraft.exe`** under **Assets** below.
+            2. Double-click to launch the app on any Windows PC — no installation needed!
+          files: release/PixelCraft.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,13 +1,8 @@
 {
-  "version": 2,
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/wallhaven",
-      "dest": "/api/wallhaven.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/$1"
+      "source": "/((?!api/).*)",
+      "destination": "/dist/$1"
     }
   ]
 }
