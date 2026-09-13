@@ -195,10 +195,18 @@ class WallpaperApi:
         return path_str
 
 
+def get_resource_path(relative_path: str) -> Path:
+    """Get absolute path to resource, works for dev and for PyInstaller bundle."""
+    if hasattr(sys, '_MEIPASS'):
+        return Path(sys._MEIPASS) / relative_path
+    return Path(__file__).resolve().parent / relative_path
+
+
 # ── Entry point ────────────────────────────────────────────────────────────────
 def main():
-    base_dir = Path(__file__).parent
-    dist_dir = base_dir / "dist"
+    dist_dir = get_resource_path("dist")
+    if not (dist_dir / "index.html").exists():
+        dist_dir = Path.cwd() / "dist"
 
     if not (dist_dir / "index.html").exists():
         print(f"[PixelCraft] ERROR: dist/index.html not found at {dist_dir}")
