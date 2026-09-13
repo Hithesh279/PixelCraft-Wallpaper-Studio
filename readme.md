@@ -5,13 +5,13 @@
 **Built for better backgrounds. Powered by PixelCraft.**
 
 <p align="center">
-  <a href="https://pixel-craft-wallpaper-studio-zhlb-git-main-hithesh279.vercel.app/"><img src="https://img.shields.io/badge/🌐_Live_Demo-Vercel-black?style=for-the-badge&logo=vercel" alt="Live Demo"></a>
+  <a href="https://pixel-craft-wallpaper-studio.vercel.app/"><img src="https://img.shields.io/badge/🌐_Live_Demo-Vercel-black?style=for-the-badge&logo=vercel" alt="Live Demo"></a>
   <a href="https://github.com/Hithesh279/PixelCraft-Wallpaper-Studio/releases"><img src="https://img.shields.io/badge/💻_Download-Windows_App_(.exe)-0078D6?style=for-the-badge&logo=windows" alt="Download Windows App"></a>
   <img src="https://img.shields.io/badge/Resolution-4K_UHD-green?style=for-the-badge" alt="4K Resolution">
   <img src="https://img.shields.io/badge/License-MIT-purple?style=for-the-badge" alt="MIT License">
 </p>
 
-> 🌐 **Live Web Demo:** [https://pixel-craft-wallpaper-studio-zhlb-git-main-hithesh279.vercel.app/](https://pixel-craft-wallpaper-studio-zhlb-git-main-hithesh279.vercel.app/)  
+> 🌐 **Live Web Demo:** [https://pixel-craft-wallpaper-studio.vercel.app/](https://pixel-craft-wallpaper-studio.vercel.app/)  
 > 💻 **Standalone Desktop App (.exe):** [Download Latest Windows Release](https://github.com/Hithesh279/PixelCraft-Wallpaper-Studio/releases)
 
 PixelCraft Wallpaper Studio is a lightweight, powerful application that combines **algorithmic procedural canvas generation** with **online search across 1,000,000+ 4K UHD wallpapers** powered by Wallhaven.
