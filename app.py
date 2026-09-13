@@ -10,6 +10,14 @@ from pathlib import Path
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import webview
 
+# Vercel entrypoint compatibility
+def app(environ, start_response):
+    start_response('200 OK', [('Content-Type', 'text/plain')])
+    return [b'PixelCraft Wallpaper Studio']
+
+handler = app
+application = app
+
 
 # ── Find a free port ───────────────────────────────────────────────────────────
 def find_free_port():
