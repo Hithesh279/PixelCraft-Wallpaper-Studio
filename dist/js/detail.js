@@ -14,7 +14,7 @@ const canvas = document.getElementById('wallpaperCanvas');
 canvas.width = 1920;
 canvas.height = 1080;
 drawPattern(canvas.getContext('2d'), 1920, 1080, wp.pattern, wp.palette, wp.seed, wp.inverted);
-document.title = `WLLPR — ${wp.name}`;
+document.title = `PixelCraft Wallpaper Studio — ${wp.name}`;
 
 // Bar info
 document.getElementById('barTitle').textContent = wp.name;
@@ -49,11 +49,11 @@ document.getElementById('btnDownloadMobile').addEventListener('click', () => {
 document.getElementById('btnSetWallpaper').addEventListener('click', async () => {
   try {
     if (!window.__TAURI__ && (!window.pywebview || !window.pywebview.api)) {
-      alert('Funcionalidade disponível apenas no app desktop.');
+      alert('Feature available only in the desktop app.');
       return;
     }
     const btn = document.getElementById('btnSetWallpaper');
-    btn.textContent = 'Aplicando...';
+    btn.textContent = 'Applying...';
     btn.disabled = true;
 
     const c = document.createElement('canvas');
@@ -74,16 +74,16 @@ document.getElementById('btnSetWallpaper').addEventListener('click', async () =>
     }
 
     await new Promise(r => setTimeout(r, 5000));
-    btn.textContent = 'Aplicado!';
+    btn.textContent = 'Applied!';
 
     setTimeout(() => {
-      btn.textContent = 'Definir Papel de Parede';
+      btn.textContent = 'Set Wallpaper';
       btn.disabled = false;
     }, 2000);
   } catch (err) {
-    alert('Erro: ' + err);
+    alert('Error: ' + err);
     const btn = document.getElementById('btnSetWallpaper');
-    btn.textContent = 'Definir Papel de Parede';
+    btn.textContent = 'Set Wallpaper';
     btn.disabled = false;
   }
 });
