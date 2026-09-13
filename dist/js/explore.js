@@ -56,12 +56,12 @@ function formatNumber(num) {
 }
 
 async function apiSearch(params) {
-  // Try via Python backend first (no CORS limitations)
+  // 1. Desktop native (pywebview)
   if (window.pywebview && window.pywebview.api && window.pywebview.api.search_wallhaven) {
     return await window.pywebview.api.search_wallhaven(params);
   }
 
-  // Fallback to direct client fetch
+  // 2. Build query parameters
   const query = new URLSearchParams({
     apikey: 'JF6rk4r6KRY7FVvOIpkgcSwhYkmyFByR',
     purity: '100',
@@ -75,7 +75,35 @@ async function apiSearch(params) {
   if (params.ratios) query.set('ratios', params.ratios);
   if (params.colors) query.set('colors', params.colors);
 
-  const res = await fetch(`https://wallhaven.cc/api/v1/search?${query.toString()}`);
+  const targetUrl = `https://wallhaven.cc/api/v1/search?${query.toString()}`;
+
+  // 3. Try Vercel Serverless Function proxy first (CORS-free)
+  try {
+    const vRes = await fetch(`/api/wallhaven?${query.toString()}`);
+    if (vRes.ok) {
+      const vData = await vRes.json();
+      if (vData && vData.data) return vData;
+    }
+  } catch (e) {}
+
+  // 4. Try high-availability CORS proxies for static web hosting
+  const proxyUrls = [
+    `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`
+  ];
+
+  for (const pUrl of proxyUrls) {
+    try {
+      const pRes = await fetch(pUrl);
+      if (pRes.ok) {
+        const pData = await pRes.json();
+        if (pData && pData.data) return pData;
+      }
+    } catch (e) {}
+  }
+
+  // 5. Direct fetch fallback
+  const res = await fetch(targetUrl);
   return await res.json();
 }
 
