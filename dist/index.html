@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PixelCraft Wallpaper Studio</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23111'/><text x='16' y='21' text-anchor='middle' font-family='-apple-system,Helvetica,Arial,sans-serif' font-size='11' font-weight='700' fill='white'>PC</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Dancing+Script:wght@600&family=Great+Vibes&family=Mrs+Saint+Delafield&family=Parisienne&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+  </style>
+</head>
+<script>
+  (function() {
+    var saved = localStorage.getItem('wllpr-theme') || 'dark';
+    if (saved === 'light') {
+      var r = document.documentElement.style;
+      r.setProperty('--bg', '#ffffff');
+      r.setProperty('--bg-card', '#ffffff');
+      r.setProperty('--bg-hover', '#e4e4e4');
+      r.setProperty('--bg-nav', 'rgba(240,240,240,0.85)');
+      r.setProperty('--text', '#111');
+      r.setProperty('--text-muted', '#666');
+      r.setProperty('--border', '#ddd');
+    }
+  })();
+</script>
+
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+</div>
+
+<nav data-tauri-drag-region>
+  <div class="nav-tabs pos-0" id="navTabs">
+    <div class="nav-slider"></div>
+    <a href="index.html" class="nav-tab active" data-pos="0" title="Home">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 8l6-5.5L14 8"/><path d="M3.5 7v5.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7"/>
+      </svg>
+    </a>
+    <a href="explore/index.html" class="nav-tab" data-pos="1" title="Explore Online">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="8" r="6"/>
+        <path d="M8 2a6 6 0 0 0 0 12M2 8a6 6 0 0 0 12 0M5.5 5.5l5 2-2 5-5-2z"/>
+      </svg>
+    </a>
+    <a href="create/index.html" class="nav-tab" data-pos="2" title="Create">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3v10M3 8h10"/>
+      </svg>
+    </a>
+  </div>
+
+  <div class="nav-actions">
+    <div class="theme-tabs" id="themeTabs">
+      <div class="theme-slider"></div>
+      <button class="theme-tab active" id="themeDark" title="Dark" style="border: none; cursor: pointer;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M7 1a6 6 0 1 0 0 12A4.5 4.5 0 0 1 7 1z"/>
+        </svg>
+      </button>
+      <button class="theme-tab" id="themeLight" title="Light" style="border: none; cursor: pointer;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="7" cy="7" r="3"/>
+          <path d="M7 1v1.5M7 12.5V14M1 7h1.5M12.5 7H14M2.8 2.8l1 1M10.2 10.2l1 1M2.8 11.2l1-1M10.2 3.8l1-1"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- Featured Wallpaper -->
+  <div class="featured" id="featuredHero">
+    <img id="featuredImg" src="" alt="Featured wallpaper">
+    <div class="featured-overlay">
+      <div class="featured-badge" data-i18n="featuredBadge">FEATURED</div>
+      <div class="featured-title" id="featuredTitle"></div>
+      <div class="featured-meta" id="featuredMeta"></div>
+      <div class="featured-actions">
+        <a id="featuredLink" href="#">
+          <button class="btn btn-primary" data-i18n="viewWallpaper">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 1l6 6-6 6"/></svg>
+            View Wallpaper
+          </button>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pattern-grouped carousel sections -->
+  <div id="sectionsContainer"></div>
+</main>
+
+<footer>
+  <div class="footer-hint-text">Explore more wallpapers by selecting “Online Wallpapers” from the top-left menu.</div>
+  <span>Built for better backgrounds. Powered by <strong class="footer-name">PixelCraft</strong>.</span>
+</footer>
+
+<script type="module">
+  function applyTheme(isDark) {
+    const r = document.documentElement.style;
+    if (isDark) {
+      r.setProperty('--bg', '#000000');
+      r.setProperty('--bg-card', '#151515');
+      r.setProperty('--bg-hover', '#1e1e1e');
+      r.setProperty('--bg-nav', 'rgba(15,15,15,0.85)');
+      r.setProperty('--text', '#f0f0f0');
+      r.setProperty('--text-muted', '#888');
+      r.setProperty('--border', '#222');
+    } else {
+      r.setProperty('--bg', '#ffffff');
+      r.setProperty('--bg-card', '#ffffff');
+      r.setProperty('--bg-hover', '#e4e4e4');
+      r.setProperty('--bg-nav', 'rgba(240,240,240,0.85)');
+      r.setProperty('--text', '#111');
+      r.setProperty('--text-muted', '#666');
+      r.setProperty('--border', '#ddd');
+    }
+  }
+
+  const themeTabs = document.getElementById('themeTabs');
+  const themeDark = document.getElementById('themeDark');
+  const themeLight = document.getElementById('themeLight');
+  const navTabs = document.getElementById('navTabs');
+
+  const saved = localStorage.getItem('wllpr-theme') || 'dark';
+  applyTheme(saved === 'dark');
+  if (saved === 'light') {
+    themeTabs.classList.add('light-active');
+    themeLight.classList.add('active');
+    themeDark.classList.remove('active');
+  }
+
+  themeDark.onclick = () => {
+    localStorage.setItem('wllpr-theme', 'dark');
+    applyTheme(true);
+    themeTabs.classList.remove('light-active');
+    themeDark.classList.add('active');
+    themeLight.classList.remove('active');
+  };
+
+  themeLight.onclick = () => {
+    localStorage.setItem('wllpr-theme', 'light');
+    applyTheme(false);
+    themeTabs.classList.add('light-active');
+    themeLight.classList.add('active');
+    themeDark.classList.remove('active');
+  };
+
+  // Nav tabs sliding animation
+  if (navTabs) {
+    navTabs.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.onclick = (e) => {
+        const targetPos = tab.getAttribute('data-pos');
+        if (tab.classList.contains('active')) return;
+        e.preventDefault();
+        navTabs.className = `nav-tabs pos-${targetPos}`;
+        navTabs.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        setTimeout(() => {
+          window.location.href = tab.href;
+        }, 160);
+      };
+    });
+  }
+</script>
+<script type="module" src="js/home.js"></script>
+</body>
+</html>

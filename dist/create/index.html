@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PixelCraft Wallpaper Studio — Create</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23111'/><text x='16' y='21' text-anchor='middle' font-family='-apple-system,Helvetica,Arial,sans-serif' font-size='11' font-weight='700' fill='white'>PC</text></svg>">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .create-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
+      padding: 24px;
+      padding-top: 68px;
+      height: 100vh;
+    }
+
+    .preview-area {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .preview-container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .preview-wrap {
+      position: relative;
+    }
+
+    .preview-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .preview-wrap canvas {
+      border-radius: 16px;
+      border: 2px solid var(--border);
+      display: block;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+
+    .controls-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      padding-right: 4px;
+      padding-top: 44px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .control-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .style-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .style-btn {
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 4px;
+      cursor: pointer;
+      transition: var(--transition);
+      overflow: hidden;
+    }
+
+    .style-btn canvas {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .style-btn:hover { border-color: var(--text-muted); }
+    .style-btn.active { border-color: var(--text); }
+
+    .palette-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .palette-swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: 50px;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: var(--transition);
+      padding: 0;
+      background: none;
+    }
+
+    .palette-swatch span {
+      flex: 1;
+      display: block;
+    }
+
+    .palette-swatch:hover { border-color: var(--text-muted); }
+    .palette-swatch.active { border-color: var(--text); }
+
+    .mode-toggle {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .mode-btn:hover { border-color: var(--text-muted); color: var(--text); }
+    .mode-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+    .mode-icon {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+    }
+
+    .mode-icon-dark { background: #222; border: 1px solid #555; }
+    .mode-icon-light { background: #eee; border: 1px solid #ccc; }
+
+    .btn-shuffle {
+      width: 100%;
+      padding: 12px;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: var(--transition);
+    }
+
+    .btn-shuffle:hover { background: var(--bg-hover); border-color: var(--text-muted); }
+
+    .export-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-export {
+      width: 100%;
+      padding: 12px;
+      border-radius: 50px;
+      border: none;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .btn-desktop { background: var(--text); color: var(--bg); }
+    .btn-desktop:hover { opacity: 0.85; }
+    .btn-mobile { background: var(--bg-card); color: var(--text); border: 1px solid var(--border) !important; }
+    .btn-mobile:hover { background: var(--bg-hover); }
+
+    .btn-apply {
+      width: 100%;
+      padding: 10px 20px;
+      border-radius: 50px;
+      border: none;
+      background: var(--text);
+      color: var(--bg);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-apply:hover { opacity: 0.85; }
+    .btn-apply:disabled { opacity: 0.6; cursor: default; }
+
+    .size-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: -4px;
+    }
+
+    /* ── Custom Palette Editor ── */
+    .custom-palette-editor {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-top: 8px;
+    }
+    .custom-palette-editor-header {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .custom-palette-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .custom-palette-actions button {
+      background: var(--bg-hover);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 14px;
+      width: 24px; height: 24px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+    .custom-palette-actions button:hover { background: var(--border); }
+    .custom-palette-actions button:disabled { opacity: 0.35; cursor: default; }
+    .color-pickers-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .color-picker-wrap {
+      position: relative;
+    }
+    .color-picker-input {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      padding: 0;
+      cursor: pointer;
+      background: none;
+      transition: var(--transition);
+    }
+    .color-picker-input::-webkit-color-swatch-wrapper { padding: 2px; border-radius: 50%; }
+    .color-picker-input::-webkit-color-swatch { border-radius: 50%; border: none; }
+    .color-picker-input:hover { border-color: var(--text-muted); transform: scale(1.1); }
+
+    /* ── Fine-Tune Sliders ── */
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .slider-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      min-width: 72px;
+      font-weight: 500;
+    }
+    .slider-track {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 4px;
+      background: var(--border);
+      outline: none;
+      cursor: pointer;
+    }
+    .slider-track::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--text);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .slider-track::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    .slider-val {
+      font-size: 11px;
+      color: var(--text-muted);
+      min-width: 14px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body>
+
+<nav data-tauri-drag-region>
+  <div class="nav-tabs pos-2" id="navTabs">
+    <div class="nav-slider"></div>
+    <a href="../index.html" class="nav-tab" data-pos="0" title="Home">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 8l6-5.5L14 8"/><path d="M3.5 7v5.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7"/>
+      </svg>
+    </a>
+    <a href="../explore/index.html" class="nav-tab" data-pos="1" title="Explore Online">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="8" r="6"/>
+        <path d="M8 2a6 6 0 0 0 0 12M2 8a6 6 0 0 0 12 0M5.5 5.5l5 2-2 5-5-2z"/>
+      </svg>
+    </a>
+    <a href="index.html" class="nav-tab active" data-pos="2" title="Create">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3v10M3 8h10"/>
+      </svg>
+    </a>
+  </div>
+
+  <div class="nav-actions">
+    <div class="theme-tabs" id="themeTabs">
+      <div class="theme-slider"></div>
+      <button class="theme-tab active" id="themeDark" title="Dark" style="border: none; cursor: pointer;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M7 1a6 6 0 1 0 0 12A4.5 4.5 0 0 1 7 1z"/>
+        </svg>
+      </button>
+      <button class="theme-tab" id="themeLight" title="Light" style="border: none; cursor: pointer;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="7" cy="7" r="3"/>
+          <path d="M7 1v1.5M7 12.5V14M1 7h1.5M12.5 7H14M2.8 2.8l1 1M10.2 10.2l1 1M2.8 11.2l1-1M10.2 3.8l1-1"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="create-layout">
+    <div class="preview-area">
+      <div class="preview-container">
+        <div class="preview-wrap">
+          <div class="preview-label">Desktop 4K</div>
+          <canvas id="previewDesktop" width="640" height="360"></canvas>
+        </div>
+        <div class="preview-wrap">
+          <div class="preview-label">Mobile</div>
+          <canvas id="previewMobile" width="145" height="314"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls-panel">
+      <div class="control-group">
+        <div class="control-label" data-i18n="pattern">Pattern</div>
+        <div class="style-grid" id="styleGrid"></div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label" data-i18n="palette">Palette</div>
+        <div class="palette-row" id="paletteRow"></div>
+        <!-- Custom Palette Editor -->
+        <div class="custom-palette-editor" id="customPaletteEditor">
+          <div class="custom-palette-editor-header">
+            <span>Custom Colors</span>
+            <div class="custom-palette-actions">
+              <button id="btnRemoveColor" title="Remove last color">−</button>
+              <button id="btnAddColor" title="Add color">+</button>
+            </div>
+          </div>
+          <div class="color-pickers-row" id="customColorPickers"></div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label" data-i18n="mode">Mode</div>
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="btnDark">
+            <span class="mode-icon mode-icon-dark"></span>
+            <span data-i18n="dark">Dark</span>
+          </button>
+          <button class="mode-btn" id="btnLight">
+            <span class="mode-icon mode-icon-light"></span>
+            <span data-i18n="light">Light</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Fine-Tune Sliders -->
+      <div class="control-group">
+        <div class="control-label">Fine Tune</div>
+        <div class="slider-group">
+          <div class="slider-row">
+            <span class="slider-label">Complexity</span>
+            <input type="range" class="slider-track" id="slider-complexity" min="1" max="10" value="5">
+            <span class="slider-val" id="slider-complexity-val">5</span>
+          </div>
+          <div class="slider-row">
+            <span class="slider-label">Amplitude</span>
+            <input type="range" class="slider-track" id="slider-amplitude" min="1" max="10" value="5">
+            <span class="slider-val" id="slider-amplitude-val">5</span>
+          </div>
+          <div class="slider-row">
+            <span class="slider-label">Density</span>
+            <input type="range" class="slider-track" id="slider-density" min="1" max="10" value="5">
+            <span class="slider-val" id="slider-density-val">5</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <button class="btn-shuffle" id="btnShuffle">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          <span data-i18n="generateVariation">GENERATE VARIATION</span>
+        </button>
+      </div>
+
+      <div class="export-group">
+        <button class="btn-apply" id="btnApply">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M2 11l3-3 2 2 4-4 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span data-i18n="setWallpaper">Set Wallpaper</span>
+        </button>
+
+        <button class="btn-export btn-desktop" id="btnDesktop">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="12" height="9" rx="1"/><path d="M5 15h6M8 12v3"/></svg>
+          <span data-i18n="downloadDesktop">Download Desktop</span>
+        </button>
+        <div class="size-hint">3840 × 2160 px</div>
+
+        <button class="btn-export btn-mobile" id="btnMobile">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="1" width="8" height="14" rx="2"/><path d="M7.5 12.5h1"/></svg>
+          <span data-i18n="downloadMobile">Download Mobile</span>
+        </button>
+        <div class="size-hint">1290 × 2796 px</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-hint-text">Explore more wallpapers by selecting “Online Wallpapers” from the top-left menu.</div>
+  <span>Built for better backgrounds. Powered by <strong class="footer-name">PixelCraft</strong>.</span>
+</footer>
+
+<script type="module">
+  function applyTheme(isDark) {
+    const r = document.documentElement.style;
+    if (isDark) {
+      r.setProperty('--bg', '#0a0a0a');
+      r.setProperty('--bg-card', '#151515');
+      r.setProperty('--bg-hover', '#1e1e1e');
+      r.setProperty('--bg-nav', 'rgba(15,15,15,0.85)');
+      r.setProperty('--text', '#f0f0f0');
+      r.setProperty('--text-muted', '#888');
+      r.setProperty('--border', '#222');
+    } else {
+      r.setProperty('--bg', '#f0f0f0');
+      r.setProperty('--bg-card', '#ffffff');
+      r.setProperty('--bg-hover', '#e4e4e4');
+      r.setProperty('--bg-nav', 'rgba(240,240,240,0.85)');
+      r.setProperty('--text', '#111');
+      r.setProperty('--text-muted', '#666');
+      r.setProperty('--border', '#ddd');
+    }
+  }
+
+  const themeTabs = document.getElementById('themeTabs');
+  const themeDark = document.getElementById('themeDark');
+  const themeLight = document.getElementById('themeLight');
+  const navTabs = document.getElementById('navTabs');
+
+  const saved = localStorage.getItem('wllpr-theme') || 'dark';
+  applyTheme(saved === 'dark');
+  if (saved === 'light') {
+    themeTabs.classList.add('light-active');
+    themeLight.classList.add('active');
+    themeDark.classList.remove('active');
+  }
+
+  themeDark.onclick = () => {
+    localStorage.setItem('wllpr-theme', 'dark');
+    applyTheme(true);
+    themeTabs.classList.remove('light-active');
+    themeDark.classList.add('active');
+    themeLight.classList.remove('active');
+  };
+
+  themeLight.onclick = () => {
+    localStorage.setItem('wllpr-theme', 'light');
+    applyTheme(false);
+    themeTabs.classList.add('light-active');
+    themeLight.classList.add('active');
+    themeDark.classList.remove('active');
+  };
+
+  // Nav tabs sliding animation
+  if (navTabs) {
+    navTabs.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.onclick = (e) => {
+        const targetPos = tab.getAttribute('data-pos');
+        if (tab.classList.contains('active')) return;
+        e.preventDefault();
+        navTabs.className = `nav-tabs pos-${targetPos}`;
+        navTabs.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        setTimeout(() => {
+          window.location.href = tab.href;
+        }, 160);
+      };
+    });
+  }
+</script>
+<script type="module" src="../js/create.js"></script>
+</body>
+</html>
