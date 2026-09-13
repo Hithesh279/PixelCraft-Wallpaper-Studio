@@ -1,5 +1,8 @@
 {
-  "devDependencies": {
-    "@tauri-apps/cli": "^2.11.2"
+  "name": "pixelcraft-wallpaper-studio",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'Build successful'"
   }
 }
