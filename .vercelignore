@@ -1,7 +1,0 @@
-# Exclude Python desktop files and build artifacts from Vercel
-app.py
-requirements.txt
-release/
-*.exe
-*.pyc
-__pycache__/
